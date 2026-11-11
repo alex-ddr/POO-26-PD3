@@ -1,4 +1,5 @@
 package src;
+
 import java.awt.*;
 import javax.swing.*;
 import java.awt.event.*;
@@ -8,8 +9,12 @@ class CalcView extends JFrame {
 
     private JTextField m_userInputTf = new JTextField(10);
     private JTextField m_totalTf     = new JTextField(25);
-    private JButton    m_multiplyBtn = new JButton("Multiply");
-    private JButton    m_clearBtn    = new JButton("Clear");
+
+    private JButton m_addBtn      = new JButton("+");
+    private JButton m_subtractBtn = new JButton("-");
+    private JButton m_multiplyBtn = new JButton("*");
+    private JButton m_divideBtn   = new JButton("/");
+    private JButton m_clearBtn    = new JButton("Clear");
 
     private CalcModel m_model;
 
@@ -24,7 +29,10 @@ class CalcView extends JFrame {
         content.setLayout(new FlowLayout());
         content.add(new JLabel("Input"));
         content.add(m_userInputTf);
+        content.add(m_addBtn);
+        content.add(m_subtractBtn);
         content.add(m_multiplyBtn);
+        content.add(m_divideBtn);
         content.add(new JLabel("Total"));
         content.add(m_totalTf);
         content.add(m_clearBtn);
@@ -53,8 +61,13 @@ class CalcView extends JFrame {
         JOptionPane.showMessageDialog(this, errMessage);
     }
 
-    void addMultiplyListener(ActionListener mal) {
-        m_multiplyBtn.addActionListener(mal);
+    void addOperationListener(Operation op, ActionListener listener) {
+        switch (op) {
+            case ADD -> m_addBtn.addActionListener(listener);
+            case SUBTRACT -> m_subtractBtn.addActionListener(listener);
+            case MULTIPLY -> m_multiplyBtn.addActionListener(listener);
+            case DIVIDE -> m_divideBtn.addActionListener(listener);
+        }
     }
 
     void addClearListener(ActionListener cal) {

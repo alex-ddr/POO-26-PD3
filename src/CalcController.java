@@ -1,4 +1,5 @@
 package src;
+
 import java.awt.event.*;
 
 public class CalcController {
@@ -9,20 +10,30 @@ public class CalcController {
         m_model = model;
         m_view  = view;
 
-        view.addMultiplyListener(new MultiplyListener());
+        for (Operation op : Operation.values()) {
+            view.addOperationListener(op, new OperationListener(op));
+        }
         view.addClearListener(new ClearListener());
     }
 
-    class MultiplyListener implements ActionListener {
+    class OperationListener implements ActionListener {
+        private final Operation m_operation;
+
+        OperationListener(Operation operation) {
+            m_operation = operation;
+        }
+
         public void actionPerformed(ActionEvent e) {
             String userInput = "";
             try {
                 userInput = m_view.getUserInput();
-                m_model.multiplyBy(userInput);
+                m_model.performOperation(m_operation, userInput);
                 m_view.setTotal(m_model.getValue());
 
             } catch (NumberFormatException nfex) {
                 m_view.showError("Bad input: '" + userInput + "'");
+            } catch (ArithmeticException aex) {
+                m_view.showError("Math error: " + aex.getMessage());
             }
         }
     }

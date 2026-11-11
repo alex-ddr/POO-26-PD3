@@ -1,4 +1,5 @@
 package src;
+
 import java.math.BigDecimal;
 import java.math.BigInteger;
 
@@ -19,17 +20,25 @@ public class CalcModel {
         m_isDecimalMode = false;
     }
 
-    public void multiplyBy(String operand) {
+    public void performOperation(Operation op, String operand) {
         operand = operand.trim();
 
         if (!m_isDecimalMode && !operand.contains(".") && !operand.toLowerCase().contains("e")) {
             BigInteger intOperand = new BigInteger(operand);
-            m_totalInt = m_totalInt.multiply(intOperand);
-            m_totalDouble = new BigDecimal(m_totalInt);
+
+            if (op == Operation.DIVIDE && !intOperand.equals(BigInteger.ZERO)
+                    && !m_totalInt.remainder(intOperand).equals(BigInteger.ZERO)) {
+                m_isDecimalMode = true;
+                BigDecimal decOperand = new BigDecimal(intOperand);
+                m_totalDouble = op.calculateDec(m_totalDouble, decOperand);
+            } else {
+                m_totalInt = op.calculateInt(m_totalInt, intOperand);
+                m_totalDouble = new BigDecimal(m_totalInt);
+            }
         } else {
             m_isDecimalMode = true;
             BigDecimal decOperand = new BigDecimal(operand);
-            m_totalDouble = m_totalDouble.multiply(decOperand);
+            m_totalDouble = op.calculateDec(m_totalDouble, decOperand);
         }
     }
 
